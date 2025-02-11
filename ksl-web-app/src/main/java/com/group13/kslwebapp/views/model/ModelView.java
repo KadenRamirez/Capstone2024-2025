@@ -20,6 +20,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -28,7 +29,7 @@ import java.util.Map;
 
 @PageTitle("Run Model")
 @Route("")
-@Menu(order = 0, icon = "line-awesome/svg/project-diagram-solid.svg")
+@Menu(order = 1, icon = "line-awesome/svg/project-diagram-solid.svg")
 public class ModelView extends Composite<VerticalLayout> {
 
     public ModelView() {
@@ -44,7 +45,37 @@ public class ModelView extends Composite<VerticalLayout> {
         Paragraph statusText = new Paragraph();
         ProgressBar progressBar = new ProgressBar();
 
-        H3 modelName = new H3("Model Name");
+
+        //
+        H3 modelInfo = new H3("Model Information");
+        Div modelDescriptionDisplay = new Div();
+
+        modelDescriptionDisplay.getStyle().set("border", "1px solid var(--lumo-contrast-30pct)");
+        modelDescriptionDisplay.getStyle().set("padding", "10px");
+        modelDescriptionDisplay.getStyle().set("background-color", "var(--lumo-shade-5pct)");
+        modelDescriptionDisplay.getStyle().set("font-style", "Arial, sans-serif");
+        modelDescriptionDisplay.setWidthFull();
+        modelDescriptionDisplay.setHeight("100px");
+
+        String modelName = "*Insert Model Name*";
+        String modelDescription = "*Insert Model Description*";
+        modelDescriptionDisplay.setText(modelName + "\n\n" + modelDescription);
+        //
+
+
+        //
+        Button advancedButton = new Button("Advanced");
+        Button configurationButton = new Button("Configurations");
+
+        advancedButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+        configurationButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+        HorizontalLayout buttonRow = new HorizontalLayout(advancedButton,configurationButton);
+        buttonRow.setWidthFull();
+        buttonRow.setJustifyContentMode(JustifyContentMode.START);
+        //
+
+
 
         getContent().setWidth("100%");
         getContent().getStyle().set("flex-grow", "1");
@@ -79,7 +110,11 @@ public class ModelView extends Composite<VerticalLayout> {
 
         getContent().add(layoutColumn2);
 
-        layoutColumn2.add(modelName);
+        //
+        layoutColumn2.add(modelInfo, modelDescriptionDisplay);
+
+        //
+
 
         layoutColumn2.add(formLayout2Col);
         layoutColumn2.add(titleHeader);
@@ -87,11 +122,26 @@ public class ModelView extends Composite<VerticalLayout> {
         formLayout2Col2.add(numOfReplications);
         formLayout2Col2.add(lenOfReplication);
         formLayout2Col2.add(lenWarmUp);
+
+        //
+        layoutColumn2.add(buttonRow);
+        //
+
         layoutColumn2.add(layoutRow);
         layoutRow.add(runButton);
         layoutColumn2.add(statusText);
         layoutColumn2.add(progressBar);
 
+
+        //
+        configurationButton.addClickListener(event ->
+            getUI().ifPresent(ui -> ui.navigate("configurations"))
+        );
+
+        advancedButton.addClickListener(event ->
+                getUI().ifPresent(ui -> ui.navigate("model-settings"))
+        );
+        //
         runButton.addClickListener(event -> {
             String numOfReplicationsValue = numOfReplications.getValue();
             String lenOfReplicationValue = lenOfReplication.getValue();
@@ -124,6 +174,4 @@ public class ModelView extends Composite<VerticalLayout> {
 
     record SampleItem(String value, String label, Boolean disabled) {
     }
-
-
 }

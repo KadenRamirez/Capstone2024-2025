@@ -8,7 +8,7 @@ import com.vaadin.flow.router.Route;
 
 @PageTitle("Simulation Results")
 @Route("results")
-@Menu(order = 1, icon = "line-awesome/svg/database-solid.svg")
+@Menu(order = 3, icon = "line-awesome/svg/database-solid.svg")
 public class ResultsView extends Composite<VerticalLayout> {
 
     public ResultsView() {
