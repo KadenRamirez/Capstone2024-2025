@@ -31,22 +31,20 @@ public class HomepageView extends Composite<VerticalLayout> {
         ch5modelLayout.setPadding(false);
         accordion.add("Chapter 5", ch5modelLayout);
 
-        Span street = new Span("4027 Amber Lake Canyon");
-        Span zipCode = new Span("72333-5884 Cozy Nook");
-        Span city = new Span("Arkansas");
-        VerticalLayout billingAddressLayout = new VerticalLayout();
-        billingAddressLayout.setSpacing(false);
-        billingAddressLayout.setPadding(false);
-        billingAddressLayout.add(street, zipCode, city);
-        accordion.add("Billing address", billingAddressLayout);
+        Anchor ch6Model1 = new Anchor("#", "Model 1");
+        Anchor ch6Model2 = new Anchor("#", "Model 2");
+        Anchor ch6Model3 = new Anchor("#", "Model 3");
+        VerticalLayout ch6modelLayout = new VerticalLayout(ch6Model1, ch6Model2, ch6Model3);
+        ch6modelLayout.setSpacing(false);
+        ch6modelLayout.setPadding(false);
+        accordion.add("Chapter 6", ch6modelLayout);
 
-        Span cardBrand = new Span("Mastercard");
-        Span cardNumber = new Span("1234 5678 9012 3456");
-        Span expiryDate = new Span("Expires 06/21");
-        VerticalLayout paymentLayout = new VerticalLayout();
-        paymentLayout.setSpacing(false);
-        paymentLayout.setPadding(false);
-        paymentLayout.add(cardBrand, cardNumber, expiryDate);
-        accordion.add("Payment", paymentLayout);
+        Anchor ch7Model1 = new Anchor("#", "Model 1");
+        Anchor ch7Model2 = new Anchor("#", "Model 2");
+        Anchor ch7Model3 = new Anchor("#", "Model 3");
+        VerticalLayout ch7modelLayout = new VerticalLayout(ch7Model1, ch7Model2, ch7Model3);
+        ch7modelLayout.setSpacing(false);
+        ch7modelLayout.setPadding(false);
+        accordion.add("Chapter 7", ch7modelLayout);
     }
 }

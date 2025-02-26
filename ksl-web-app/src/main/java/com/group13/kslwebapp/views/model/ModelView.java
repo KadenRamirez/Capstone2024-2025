@@ -15,17 +15,14 @@ import com.vaadin.flow.component.orderedlayout.FlexComponent.JustifyContentMode;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
-import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.Menu;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.theme.lumo.LumoUtility.Gap;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.net.*;
+import java.io.*;
+
 
 @PageTitle("Run Model")
 @Route("")
@@ -152,24 +149,35 @@ public class ModelView extends Composite<VerticalLayout> {
 
             statusText.setText("Running simulation...");
             progressBar.setIndeterminate(true);
+            sendDataToServer(numOfReplicationsValue, lenOfReplicationValue, lenWarmUpValue);
 
-            // (In a real application, you'd replace this with the actual simulation logic)
             new Thread(() -> {
-                try {
-                    Thread.sleep(2000);
-
-                    getUI().ifPresent(ui -> ui.access(() -> {
-                        if (ui.isAttached()) {
-                            statusText.setText("Simulation complete!");
-                            progressBar.setIndeterminate(false);
-                            progressBar.setValue(1.0); // Set progress to 100%
-                        }
-                    }));
-                } catch (InterruptedException e) {
-                    System.err.println("An error occurred: " + e.getMessage());
-                }
+                getUI().ifPresent(ui -> ui.access(() -> {
+                    if (ui.isAttached()) {
+                        statusText.setText("Simulation complete!");
+                        progressBar.setIndeterminate(false);
+                        progressBar.setValue(1.0); // Set progress to 100%
+                    }
+                }));
             }).start();
         });
+    }
+
+    private void sendDataToServer(String numOfReplications, String lenOfReplication, String lenWarmUp) {
+        System.out.println("This is starting.");
+        String serverAddress = "10.35.89.141";
+        int serverPort = 21000;
+        try (Socket socket = new Socket(serverAddress, serverPort);
+             PrintWriter out = new PrintWriter(socket.getOutputStream(), true)) {
+
+            // Prepare data to send (for example, using a simple JSON format)
+            String message = String.format("numOfReplications=%s&lenOfReplication=%s&lenWarmUp=%s",
+                    numOfReplications, lenOfReplication, lenWarmUp);
+            System.out.println("Data sent: " + message);
+
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     record SampleItem(String value, String label, Boolean disabled) {
