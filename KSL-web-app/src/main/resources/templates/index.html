@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javalin + Thymeleaf</title>
+    <style>
+        /* Center the content on the page */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .form-container {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* Style the input field */
+        textarea {
+            width: 90%;
+            height: 200px; /* Increased height for large descriptions */
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            margin: 10px 0;
+            resize: vertical; /* Allow users to resize the text area */
+        }
+
+        /* Style the submit button */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        /* Style the title */
+        h1 {
+            font-size: 2rem;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h1>Enter a Description of Your Model</h1>
+
+    <form action="/submit" method="post">
+        <textarea name="modelDescription" placeholder="Enter a detailed description of your model..." required></textarea>
+        <br>
+        <button type="submit">Submit</button>
+    </form>
+
+    <h2 th:if="${description != null}">Your Model Description: <span th:text="${description}"></span></h2>
+</div>
+</body>
+</html>
