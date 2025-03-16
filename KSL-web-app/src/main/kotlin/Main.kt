@@ -25,9 +25,9 @@ fun main() {
 
     // Handle form submission (POST request)
     app.post("/submit") { ctx ->
-        val name = ctx.formParam("username") ?: "Guest"
+        val modelDescription = ctx.formParam("description") ?: "No description provided"
         val context = Context().apply {
-            setVariable("name", name)
+            setVariable("modelDescription", modelDescription)
         }
         val html = templateEngine.process("index", context)
         ctx.html(html)

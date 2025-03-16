@@ -30,13 +30,19 @@
         /* Style the input field */
         textarea {
             width: 90%;
-            height: 200px; /* Increased height for large descriptions */
+            height: 200px;
             padding: 15px;
             font-size: 18px;
             border: 2px solid #ccc;
             border-radius: 4px;
             margin: 10px 0;
-            resize: vertical; /* Allow users to resize the text area */
+            resize: vertical;
+        }
+
+        /* Style the file input */
+        input[type="file"] {
+            padding: 10px;
+            margin: 10px 0;
         }
 
         /* Style the submit button */
@@ -65,13 +71,17 @@
 <div class="form-container">
     <h1>Enter a Description of Your Model</h1>
 
-    <form action="/submit" method="post">
-        <textarea name="modelDescription" placeholder="Enter a detailed description of your model..." required></textarea>
+    <form action="/submit" method="post" enctype="multipart/form-data">
+        <textarea name="description" placeholder="Enter a detailed description of your model..." required></textarea>
+        <br>
+        <input type="file" name="file" />
         <br>
         <button type="submit">Submit</button>
     </form>
 
-    <h2 th:if="${description != null}">Your Model Description: <span th:text="${description}"></span></h2>
+    <!-- Display the description and file if they are provided -->
+    <h2 th:if="${modelDescription != null}">Your Model Description: <span th:text="${modelDescription}"></span></h2>
+    <h2 th:if="${fileName != null}">Uploaded File: <span th:text="${fileName}"></span></h2>
 </div>
 </body>
 </html>
