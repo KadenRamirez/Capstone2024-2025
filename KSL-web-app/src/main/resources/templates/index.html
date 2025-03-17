@@ -71,17 +71,24 @@
 <div class="form-container">
     <h1>Enter a description of Your Model</h1>
 
-    <form action="/submit" method="post" enctype="multipart/form-data">
+    <!-- Modify the form to accept multiple file uploads -->
+    <form action="/upload" method="post" enctype="multipart/form-data">
         <textarea name="description" placeholder="Enter a detailed description of your model..." required></textarea>
         <br>
-        <input type="file" name="file" />
+        <!-- Allow multiple files to be uploaded -->
+        <input type="file" name="files" multiple>
         <br>
         <button type="submit">Submit</button>
     </form>
 
-    <!-- Display the description and file if they are provided -->
+    <!-- Display the description and uploaded files if they are provided -->
     <h2 th:if="${modelDescription != null}">Your Model Description: <span th:text="${modelDescription}"></span></h2>
-    <h2 th:if="${fileName != null}">Uploaded File: <span th:text="${fileName}"></span></h2>
+    <div th:if="${fileNames != null}">
+        <h2>Uploaded Files:</h2>
+        <ul>
+            <li th:each="file : ${fileNames}" th:text="${file}"></li>
+        </ul>
+    </div>
 </div>
 </body>
 </html>
