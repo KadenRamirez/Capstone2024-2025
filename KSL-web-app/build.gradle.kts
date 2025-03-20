@@ -15,6 +15,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.9") // Logging for Javalin
     implementation("commons-io:commons-io:2.11.0") // File handling utilities
     implementation("org.jetbrains.kotlin:kotlin-stdlib") // Kotlin standard library
+    api(group = "io.github.rossetti", name = "KSLCore", version = "R1.2.0")
 }
 
 application {
