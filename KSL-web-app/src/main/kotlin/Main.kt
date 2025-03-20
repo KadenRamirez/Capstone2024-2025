@@ -5,7 +5,6 @@ import org.thymeleaf.context.Context
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import java.util.Scanner
 import org.apache.commons.io.FileUtils
-import java.io.InputStream
 
 fun main() {
     val app = Javalin.create().start(7000)
@@ -26,16 +25,6 @@ fun main() {
         ctx.html(html)
     }
 
-    // Handle form submission (POST request)
-    // app.post("/post") { ctx ->
-    //     val modelDescription = ctx.formParam("description") ?: "No description provided"
-    //     val context = Context().apply {
-    //         setVariable("modelDescription", modelDescription)
-    //     }
-    //     val html = templateEngine.process("index", context)
-    //     ctx.html(html)
-    // }
-
     app.post("/upload") { ctx ->
         val uploadDir = File("upload")
         if (!uploadDir.exists()) uploadDir.mkdirs() // Ensure upload directory exists
@@ -48,9 +37,20 @@ fun main() {
         val context = Context().apply {
             setVariable("modelDescription", modelDescription)
         }
-        val html = templateEngine.process("index", context)
-        ctx.result("Files uploaded successfully!\n")
+        ctx.sessionAttribute("modelDescription", modelDescription)
+        ctx.redirect("/model")
     }
+
+    // Render the model page with the description
+    app.get("/model") { ctx ->
+        val modelDescription = ctx.sessionAttribute<String>("modelDescription") ?: "No description provided"
+        val context = Context().apply {
+            setVariable("modelDescription", modelDescription)
+        }
+        val html = templateEngine.process("model", context)
+        ctx.html(html)
+    }
+
 
     println("Server running on http://localhost:7000")
     println("Press ENTER to stop the server...")
