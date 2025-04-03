@@ -1,3 +1,4 @@
+package app
 import io.javalin.Javalin
 import java.io.File
 import org.thymeleaf.TemplateEngine
@@ -5,6 +6,12 @@ import org.thymeleaf.context.Context
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import java.util.Scanner
 import org.apache.commons.io.FileUtils
+import simulation.StemFairMixerEnhancedWithMovement
+import ksl.simulation.Model
+import java.io.StringWriter
+import java.io.PrintWriter
+import ksl.utilities.io.KSL
+import ksl.utilities.io.MarkDown
 
 fun main() {
     val app = Javalin.create().start(7000)
@@ -24,7 +31,6 @@ fun main() {
         val html = templateEngine.process("index", context)
         ctx.html(html)
     }
-
     app.post("/upload") { ctx ->
         val uploadDir = File("upload")
         if (!uploadDir.exists()) uploadDir.mkdirs() // Ensure upload directory exists
@@ -50,7 +56,24 @@ fun main() {
         val html = templateEngine.process("model", context)
         ctx.html(html)
     }
+    // Run the new `TandemQueueWithBlocking` simulation
+    app.get("/run-simulation") { ctx ->
+        val m = Model()
+        StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
+        m.numberOfReplications = 400
+        m.simulate()
+        m.print()
+        
+        val stringWriter = StringWriter()
+        val printWriter = PrintWriter(stringWriter)
 
+        m.simulationReporter.writeHalfWidthSummaryReportAsMarkDown(printWriter, df = MarkDown.D3FORMAT)
+
+        val markdownOutput = stringWriter.toString()
+
+    // Display Markdown as raw text in a preformatted block
+    ctx.html("<pre>$markdownOutput</pre>")
+    }
 
     println("Server running on http://localhost:7000")
     println("Press ENTER to stop the server...")

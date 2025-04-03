@@ -19,5 +19,5 @@ dependencies {
 }
 
 application {
-    mainClass.set("simulation.Ch5Example8Kt") // Entry point
+    mainClass.set("app.MainKt") // Entry point
 }
