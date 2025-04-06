@@ -34,22 +34,30 @@ fun main() {
     app.post("/upload") { ctx ->
         val uploadDir = File("src/main/kotlin/simulation")
         if (!uploadDir.exists()) uploadDir.mkdirs() // Ensure upload directory exists
-
-        ctx.uploadedFiles("files").forEach { uploadedFile ->
+        
+        val filename = ""
+        val uploadedFile = ctx.uploadedFile("files")
+        if (uploadedFile != null) {
             val destFile = File(uploadDir, uploadedFile.filename())
+            val filename = uploadedFile.filename()
             FileUtils.copyInputStreamToFile(uploadedFile.content(), destFile)
+        } else {
+            ctx.status(400).result("No file uploaded.")
         }
+        
         val modelDescription = ctx.formParam("description") ?: "No description provided"
-        val keys = listOf("Number of replications", "Length of replication", "Length of warm-up replication")
-        val values = listOf(0.0, 0.0, 0.0)
+        val keys = listOf("Number of replications", "Length of replication", "Length of warm-up replication") //SET WITH CONTROL KEYS
+        val values = listOf(0.0, 0.0, 0.0) //SET WITH CONTROL VALUES
         val context = Context().apply {
             setVariable("modelDescription", modelDescription)
             setVariable("keys", keys)
             setVariable("values", values)
+            setVariable("filename", filename)
         }
         ctx.sessionAttribute("modelDescription", modelDescription)
         ctx.sessionAttribute("keys", keys)
         ctx.sessionAttribute("values", values)
+        ctx.sessionAttribute("filename", filename)
         ctx.redirect("/model")
     }
 
