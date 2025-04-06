@@ -30,6 +30,26 @@ import ksl.simulation.KSLEvent
 import ksl.simulation.ModelElement
 import ksl.utilities.divideConstant
 import ksl.utilities.random.rvariable.*
+import ksl.simulation.Model
+import ksl.utilities.io.KSL
+import ksl.utilities.io.MarkDown
+import java.io.StringWriter
+import java.io.PrintWriter
+
+fun runSimulation(): String{
+    val m = Model()
+    StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
+    m.numberOfReplications = 400
+    m.simulate()
+    //m.print()
+    val stringWriter = StringWriter()
+    val printWriter = PrintWriter(stringWriter)
+
+    m.simulationReporter.writeHalfWidthSummaryReportAsMarkDown(printWriter, df = MarkDown.D3FORMAT)
+
+    val markdownOutput = stringWriter.toString()
+    return markdownOutput
+}
 
 class StemFairMixerEnhancedWithMovement(parent: ModelElement, name: String? = null) : ProcessModel(parent, name) {
 
