@@ -6,12 +6,23 @@ import org.thymeleaf.context.Context
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver
 import java.util.Scanner
 import org.apache.commons.io.FileUtils
-import simulation.StemFairMixerEnhancedWithMovement
 import ksl.simulation.Model
 import java.io.StringWriter
 import java.io.PrintWriter
 import ksl.utilities.io.KSL
 import ksl.utilities.io.MarkDown
+import javax.script.ScriptEngineManager
+import javax.script.Invocable
+
+fun invokeRunSimulation(scriptPath: String): String {
+    val engine = ScriptEngineManager().getEngineByExtension("kts")
+
+    engine.eval(File(scriptPath).readText())
+
+    val invocable = engine as? Invocable
+    val result = invocable?.invokeFunction("runSimulation") as? String
+    return result ?: "No output from runSimulation"
+}
 
 fun main() {
     val app = Javalin.create().start(7070)
@@ -35,11 +46,11 @@ fun main() {
         val uploadDir = File("src/main/kotlin/simulation")
         if (!uploadDir.exists()) uploadDir.mkdirs() // Ensure upload directory exists
         
-        val filename = ""
+        var filename = ""
         val uploadedFile = ctx.uploadedFile("files")
         if (uploadedFile != null) {
             val destFile = File(uploadDir, uploadedFile.filename())
-            val filename = uploadedFile.filename()
+            filename = uploadedFile.filename()
             FileUtils.copyInputStreamToFile(uploadedFile.content(), destFile)
         } else {
             ctx.status(400).result("No file uploaded.")
@@ -76,21 +87,11 @@ fun main() {
     }
     // Run the new `TandemQueueWithBlocking` simulation
     app.get("/run-simulation") { ctx ->
-        val m = Model()
-        StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
-        m.numberOfReplications = 400
-        m.simulate()
-        m.print()
-        
-        val stringWriter = StringWriter()
-        val printWriter = PrintWriter(stringWriter)
-
-        m.simulationReporter.writeHalfWidthSummaryReportAsMarkDown(printWriter, df = MarkDown.D3FORMAT)
-
-        val markdownOutput = stringWriter.toString()
-
+        val filename = ctx.sessionAttribute<String>("filename")
+        val scriptPath = "src/main/kotlin/simulation/$filename"
+        val results = invokeRunSimulation(scriptPath)
     // Display Markdown as raw text in a preformatted block
-    ctx.html("<pre>$markdownOutput</pre>")
+    ctx.html("<pre>$results</pre>")
     }
     
     // route to upload model page 
