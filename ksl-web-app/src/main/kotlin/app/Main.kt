@@ -32,7 +32,7 @@ fun main() {
         ctx.html(html)
     }
     app.post("/upload") { ctx ->
-        val uploadDir = File("upload")
+        val uploadDir = File("src/main/kotlin/simulation")
         if (!uploadDir.exists()) uploadDir.mkdirs() // Ensure upload directory exists
 
         ctx.uploadedFiles("files").forEach { uploadedFile ->
