@@ -7,7 +7,7 @@ import java.util.Scanner
 import org.apache.commons.io.FileUtils
 
 fun main() {
-    val app = Javalin.create().start(7000)
+    val app = Javalin.create().start(7070)
 
     // Configure Thymeleaf
     val templateEngine = TemplateEngine().apply {
@@ -50,7 +50,13 @@ fun main() {
         val html = templateEngine.process("model", context)
         ctx.html(html)
     }
-
+    
+    // route to upload model page 
+    app.get("/upload-model") { ctx ->
+        val context = Context()
+        val html = templateEngine.process("upload-model", context)
+        ctx.html(html)
+    }
 
     println("Server running on http://localhost:7000")
     println("Press ENTER to stop the server...")

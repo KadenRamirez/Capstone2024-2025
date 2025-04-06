@@ -21,3 +21,8 @@ dependencies {
 application {
     mainClass.set("MainKt") // Entry point
 }
+
+tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+    kotlinOptions.jvmTarget = "17"
+}
+
