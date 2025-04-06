@@ -10,6 +10,13 @@ fun main() {
     m.numberOfReplications = 400
     m.simulate()
     m.print()
+    val controls = m.controls()
+    val map = controls.asMap()
+    println("-------------------------------------------------------------------------------------------")
+    println("-------------------------------------------------------------------------------------------")
+    println("-------------------------------------------------------------------------------------------")
+    println("-------------------------------------------------------------------------------------------")
+    println(map)
     val r = m.simulationReporter
     r.writeHalfWidthSummaryReportAsMarkDown(KSL.out, df = MarkDown.D3FORMAT)
 }

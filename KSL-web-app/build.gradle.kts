@@ -19,7 +19,8 @@ dependencies {
 }
 
 application {
-    mainClass.set("app.MainKt") // Entry point
+    //mainClass.set("app.MainKt") // Entry point
+    mainClass.set("simulation.Ch8Example2Kt") // Entry point for testing
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
