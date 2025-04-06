@@ -73,6 +73,7 @@ fun main() {
 
     // Display Markdown as raw text in a preformatted block
     ctx.html("<pre>$markdownOutput</pre>")
+    }
     
     // route to upload model page 
     app.get("/upload-model") { ctx ->
