@@ -107,12 +107,10 @@
 <div class="form-container">
     <h1>Parameters</h1>
     <form action="/run" method="post">
-        <label>Number of replications:</label>
-        <input type="number" name="param1" required>
-        <label>Length of replication:</label>
-        <input type="number" name="param2" required>
-        <label>Length of warm-up replication:</label>
-        <input type="number" name="param3" required>
+        <th:block th:each="key : ${keys}">
+            <label th:text="${key}">Key</label>
+            <input type="text" th:name="${#strings.replace(key, ' ', '_')}" required />
+        </th:block>
         <br>
         <button type="submit">Run Simulation</button>
         <p>*Simulation Status*...</p>

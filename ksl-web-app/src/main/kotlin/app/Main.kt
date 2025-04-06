@@ -40,18 +40,28 @@ fun main() {
             FileUtils.copyInputStreamToFile(uploadedFile.content(), destFile)
         }
         val modelDescription = ctx.formParam("description") ?: "No description provided"
+        val keys = listOf("Number of replications", "Length of replication", "Length of warm-up replication")
+        val values = listOf(0.0, 0.0, 0.0)
         val context = Context().apply {
             setVariable("modelDescription", modelDescription)
+            setVariable("keys", keys)
+            setVariable("values", values)
         }
         ctx.sessionAttribute("modelDescription", modelDescription)
+        ctx.sessionAttribute("keys", keys)
+        ctx.sessionAttribute("values", values)
         ctx.redirect("/model")
     }
 
     // Render the model page with the description
     app.get("/model") { ctx ->
         val modelDescription = ctx.sessionAttribute<String>("modelDescription") ?: "No description provided"
+        val keys = ctx.sessionAttribute<List<String>>("keys") ?: emptyList()
+        val values = ctx.sessionAttribute<List<String>>("keys") ?: emptyList()
         val context = Context().apply {
             setVariable("modelDescription", modelDescription)
+            setVariable("keys", keys)
+            setVariable("values", values)
         }
         val html = templateEngine.process("model", context)
         ctx.html(html)
