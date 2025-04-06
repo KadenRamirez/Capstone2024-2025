@@ -82,7 +82,7 @@ fun main() {
         ctx.html(html)
     }
 
-    println("Server running on http://localhost:7000")
+    println("Server running on http://localhost:7070")
     println("Press ENTER to stop the server...")
 
     // Wait for ENTER key press to stop the server
