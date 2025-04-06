@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Javalin + Thymeleaf</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        /* Center the content on the page */
+        body 
+        {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Full viewport height */
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        .form-container 
+        {
+            text-align: center;
+            padding: 20px;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        /* Style the input field */
+        textarea 
+        {
+            width: 90%;
+            height: 200px;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            margin: 10px 0;
+            resize: vertical;
+        }
+
+        /* Style the file input */
+        input[type="file"] 
+        {
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        /* Style the submit button */
+        button 
+        {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            background-color: #5177a2;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover 
+        {
+            background-color: #3a5f89;
+        }
+
+        /* Style the title */
+        h1 
+        {
+            font-size: 2rem;
+            color: #333;
+        }
+
+        /* Style the home button */
+        .homebutton 
+        {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transition: translateX(-50%);
+            padding: 15px;
+            font-size: 24px;
+            border: none;
+            background-color: #5177a2;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            display: center;
+            justify-content: center;;
+            align-items: center;
+            width: 60px;
+            height: 60px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .homebutton i 
+        {
+            font-size: 24px;
+        }
+
+        /* Information Containers*/
+        .infocontainer
+        {
+            /* background-color: #fff;
+            padding: 15px;
+            margin-top: 15px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            border: 2px solid #ccc;
+            border-radius: 8px;
+            cursor: pointer; */
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            width: 100;
+            max-width: 600px;
+            margin-bottom: 20px;
+        }
+
+        .infocontainer-content
+        {
+            /* display: none;
+            margin-top: 10px;
+            background-color: #f1f1f1;
+            padding: 10px;
+            border-radius: 4px;
+            text-align: left; */
+            padding: 10px;
+            background-color: #f1f1f1;
+            display: none; 
+            overflow: hidden;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+    </style>
+</head>
+<body>  
+    <div class="infocontainer">
+        <!-- How to Upload Model -->
+        <div class="information" onclick="toggleContent('upload-model-content')">
+            <h2> How To Upload a Model </h2>
+            <div id="upload-model-content" class="infocontainer">
+                <p> Section explaining the steps to properly upload a model to this web app.</p>
+            </div>
+        </div>
+        <!-- How to Format the Model Code -->
+        <div class="information" onclick="toggleContent('format-model-content')">
+            <h2> How To Format the Model Code </h2>
+            <div id="format-model-content" class="infocontainer">
+                <p> Section explaining how to properly format KSL model code for seamless upload and function.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="form-container">
+        <h1>Enter The Model Description</h1>
+
+        <!-- Modify the form to accept multiple file uploads -->
+        <form action="/upload" method="post" enctype="multipart/form-data">
+            <textarea name="description" placeholder="Enter a detailed description of your model..." required></textarea>
+            <br>
+            <!-- Allow multiple files to be uploaded -->
+            <input type="file" name="files" multiple>
+            <br>
+            <button type="submit">Submit</button>
+        </form>
+
+        <!-- Display the description and uploaded files if they are provided -->
+        <h2 th:if="${modelDescription != null}">Your Model Description: <span th:text="${modelDescription}"></span></h2>
+        <div th:if="${fileNames != null}">
+            <h2>Uploaded Files:</h2>
+            <ul>
+                <li th:each="file : ${fileNames}" th:text="${file}"></li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- Home Button -->
+     <a href="/" class="homebutton">
+        <i class="fas fa-home"></i>
+     </a> 
+</body>
+</html>

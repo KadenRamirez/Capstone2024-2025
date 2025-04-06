@@ -14,7 +14,7 @@ import ksl.utilities.io.KSL
 import ksl.utilities.io.MarkDown
 
 fun main() {
-    val app = Javalin.create().start(7000)
+    val app = Javalin.create().start(7070)
 
     // Configure Thymeleaf
     val templateEngine = TemplateEngine().apply {
@@ -73,6 +73,12 @@ fun main() {
 
     // Display Markdown as raw text in a preformatted block
     ctx.html("<pre>$markdownOutput</pre>")
+    
+    // route to upload model page 
+    app.get("/upload-model") { ctx ->
+        val context = Context()
+        val html = templateEngine.process("upload-model", context)
+        ctx.html(html)
     }
 
     println("Server running on http://localhost:7000")

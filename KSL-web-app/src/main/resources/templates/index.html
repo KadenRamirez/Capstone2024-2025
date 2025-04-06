@@ -1,94 +1,79 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Javalin + Thymeleaf</title>
-    <style>
-        /* Center the content on the page */
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh; /* Full viewport height */
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-        }
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>KSL Web Application</title>
+        <style>
+            body
+            {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                height: 100vh; /* Full viewport height */
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f4;
+            }
+            /* center header */
+            h1
+            {
+                font-size: 3rem;
+                color: #333;
+                text-align: center;
+            }
+            /* description below header */
+            .description
+            {
+                font-family: Georgia, serif;
+                font-size: 1.5rem;
+                color: #555;
+                text-align: center;
+                margin-top: 20px;
+            }
+            /* style the drowdown menu */
+            select
+            {
+                width: 300px;
+                padding: 10px;
+                font-size: 16px;
+                margin: 10px;
+                border: 2px solid #ccc;
+                border-radius: 4px;
+            }
+            /* style the submit button */
+            button 
+            {
+                width: 300px;
+                padding: 10px 20px;
+                font-size: 16px;
+                border: none;
+                background-color: #5177a2;
+                color: white;
+                border-radius: 4px;
+                cursor: pointer;
+            }
 
-        .form-container {
-            text-align: center;
-            padding: 20px;
-            border: 2px solid #ccc;
-            border-radius: 8px;
-            background-color: #fff;
-            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-        }
-
-        /* Style the input field */
-        textarea {
-            width: 90%;
-            height: 200px;
-            padding: 15px;
-            font-size: 18px;
-            border: 2px solid #ccc;
-            border-radius: 4px;
-            margin: 10px 0;
-            resize: vertical;
-        }
-
-        /* Style the file input */
-        input[type="file"] {
-            padding: 10px;
-            margin: 10px 0;
-        }
-
-        /* Style the submit button */
-        button {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            background-color: #4CAF50;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #45a049;
-        }
-
-        /* Style the title */
-        h1 {
-            font-size: 2rem;
-            color: #333;
-        }
-    </style>
-</head>
-<body>
-<div class="form-container">
-    <h1>Enter a description of Your Model</h1>
-
-    <!-- Modify the form to accept multiple file uploads -->
-    <form action="/upload" method="post" enctype="multipart/form-data">
-        <textarea name="description" placeholder="Enter a detailed description of your model..." required></textarea>
-        <br>
-        <!-- Allow multiple files to be uploaded -->
-        <input type="file" name="files" multiple>
-        <br>
-        <button type="submit">Submit</button>
-    </form>
-
-    <!-- Display the description and uploaded files if they are provided -->
-    <h2 th:if="${modelDescription != null}">Your Model Description: <span th:text="${modelDescription}"></span></h2>
-    <div th:if="${fileNames != null}">
-        <h2>Uploaded Files:</h2>
-        <ul>
-            <li th:each="file : ${fileNames}" th:text="${file}"></li>
-        </ul>
-    </div>
-</div>
-</body>
+            button:hover 
+            {
+                background-color: #3a5f89;
+            }
+        </style>
+    </head>
+    <body>
+        <!-- main header-->
+         <h1> KSL Web Architecture </h1>
+         <!-- description below header-->
+         <p class="description"> To be filled </p>
+         <!-- dropdown menu below description-->
+         <select>
+            <option value=""> Models</option>
+            <option value="model1"> To be filled</option>
+            <option value="model2"> To be filled</option>
+            <option value="model3"> To be filled</option>
+         </select>
+         <!-- button to upload model-->
+          <button onclick="window.location.href='/upload-model'"> Upload Model</button>
+    </body>
 </html>
