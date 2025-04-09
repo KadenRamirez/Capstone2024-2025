@@ -107,9 +107,14 @@
 <div class="form-container">
     <h1>Parameters</h1>
     <form action="/run-simulation" method="get">
-        <th:block th:each="key : ${keys}">
+        <th:block th:each="key, iterStat : ${keys}">
             <label th:text="${key}">Key</label>
-            <input type="text" th:name="${#strings.replace(key, ' ', '_')}" required />
+            <input 
+                type="text" 
+                th:name="${#strings.replace(key, ' ', '_')}" 
+                th:value="${values[iterStat.index]}" 
+                required 
+            />
         </th:block>
     </form>
 </div>

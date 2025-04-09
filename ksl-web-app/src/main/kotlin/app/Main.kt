@@ -76,7 +76,7 @@ fun main() {
     app.get("/model") { ctx ->
         val modelDescription = ctx.sessionAttribute<String>("modelDescription") ?: "No description provided"
         val keys = ctx.sessionAttribute<List<String>>("keys") ?: emptyList()
-        val values = ctx.sessionAttribute<List<String>>("keys") ?: emptyList()
+        val values = ctx.sessionAttribute<List<String>>("values") ?: emptyList()
         val context = Context().apply {
             setVariable("modelDescription", modelDescription)
             setVariable("keys", keys)
