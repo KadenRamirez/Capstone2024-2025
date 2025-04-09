@@ -100,6 +100,11 @@ fun main() {
         val html = templateEngine.process("upload-model", context)
         ctx.html(html)
     }
+    app.get("/setup-guide") { ctx ->
+        val context = Context()
+        val html = templateEngine.process("setup-guide", context)
+        ctx.html(html)
+    }
 
     println("Server running on http://localhost:7070")
     println("Press ENTER to stop the server...")

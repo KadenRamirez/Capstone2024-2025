@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulation Setup Guide</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 40px;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #333;
+            text-align: center;
+        }
+
+        .description {
+            font-family: Georgia, serif;
+            font-size: 1.25rem;
+            color: #555;
+            max-width: 800px;
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        pre {
+            text-align: left;
+            background-color: #fff;
+            padding: 20px;
+            margin-top: 30px;
+            font-size: 0.9rem;
+            color: #333;
+            border-radius: 5px;
+            width: 90%;
+            max-width: 1000px;
+            overflow-x: auto;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 30px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #5177a2;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #3a5f89;
+        }
+    </style>
+</head>
+<body>
+    <h1>How to Set Up a Simulation Script</h1>
+
+    <p class="description">
+        To run a simulation using the web application, you must upload a <strong>.kts</strong> file.
+        The script must belong to the <code>simulation</code> package and include a <code>runSimulation()</code> function.
+        This function will be called automatically after upload to execute your model and return the results.
+    </p>
+
+    <pre>
+package simulation
+// your imports
+import ksl.modeling.entity.ProcessModel
+import ksl.simulation.Model
+import ksl.simulation.ModelElement
+import ksl.utilities.io.MarkDown
+import ksl.simulation.Model
+import ksl.utilities.io.KSL
+import ksl.utilities.io.MarkDown
+import java.io.StringWriter
+import java.io.PrintWriter
+import ksl.controls.ControlType
+import ksl.controls.KSLControl
+
+fun runSimulation(): String {
+    val m = Model()
+    StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case") // Example model name
+    m.numberOfReplications = 400
+    m.simulate()
+
+    val writer = StringWriter()
+    val printer = PrintWriter(writer)
+
+    val controls = m.controls()
+    val map = controls.asMap()
+    println("This is the map: " + map)
+    println("This is the key: ")
+    val keyLoop = controls.controlKeys()
+    for(key in keyLoop) {
+        println(key)
+
+    m.simulationReporter.writeHalfWidthSummaryReportAsMarkDown(printer, df = MarkDown.D3FORMAT)
+    return writer.toString()
+}
+
+class StemFairMixerEnhancedWithMovement(parent: ModelElement, name: String? = null) : ProcessModel(parent, name) {
+    // Define your model setup here
+}
+    </pre>
+
+    <button onclick="window.location.href='/upload-model'">Upload Your Model</button>
+</body>
+</html>
