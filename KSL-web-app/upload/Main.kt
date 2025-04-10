@@ -82,6 +82,28 @@ fun main() {
         ctx.html(html)
     }
 
+    //route to example setup page
+    app.get("/setup-guide") { ctx ->
+        val context = Context()
+        val html = templateEngine.process("setup-guide", context)
+        ctx.html(html)
+    }
+    
+    //route to example model page
+    app.get("/kslmodel-examples") { ctx ->
+        val context = Context()
+        val html = templateEngine.process("kslmodel-examples", context)
+        ctx.html(html)
+    }
+
+    //route to faq  page
+    app.get("/faq") { ctx ->
+        val context = Context()
+        val html = templateEngine.process("faq", context)
+        ctx.html(html)
+    }
+
+
     println("Server running on http://localhost:7000")
     println("Press ENTER to stop the server...")
 

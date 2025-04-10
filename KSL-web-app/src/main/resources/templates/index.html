@@ -16,6 +16,43 @@
                 font-family: Arial, sans-serif;
                 background-color: #f4f4f4;
             }
+            /* homepage navigation to other pages */
+            .navigationbar
+            {
+                width: 100%;
+                background-color: #5177a2;
+                padding: 10px 0;
+                position: fixed;
+                top: 0;
+                z-index: 1000;
+                box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            }
+            .navigationtabs
+            {
+                list-style-type: none;
+                display: flex;
+                justify-content: center;
+                margin: 0;
+                padding: 0;
+            }
+            .navigationtabs li 
+            {
+                margin: 0 20px;
+            }
+            .navigationtabs a
+            {
+                color: white;
+                text-decoration: none;
+                font-weight: bold;
+                font-size: 16px;
+                padding: 8px 12px;
+                border-radius: 4px;
+                transition: background-color 0.3s ease;
+            }
+            .navigationtabs a:hover
+            {
+                background-color: #3a5f89;
+            }
             /* center header */
             h1
             {
@@ -32,16 +69,6 @@
                 text-align: center;
                 margin-top: 20px;
             }
-            /* style the drowdown menu */
-            select
-            {
-                width: 300px;
-                padding: 10px;
-                font-size: 16px;
-                margin: 10px;
-                border: 2px solid #ccc;
-                border-radius: 4px;
-            }
             /* style the submit button */
             button 
             {
@@ -54,7 +81,6 @@
                 border-radius: 4px;
                 cursor: pointer;
             }
-
             button:hover 
             {
                 background-color: #3a5f89;
@@ -62,17 +88,18 @@
         </style>
     </head>
     <body>
+        <!-- navigation bar -->
+         <nav class="navigationbar">
+            <ul class="navigationtabs">
+                <li><a href="/setup-guide"> How to Upload </a></li>
+                <li><a href="/kslmodel-examples"> KSL Models </a></li>
+                <li><a href="/faq"> Frequently Asked Questions (FAQ) </a></li>
+            </ul>
+         </nav>
         <!-- main header-->
          <h1> KSL Web Architecture </h1>
          <!-- description below header-->
          <p class="description"> To be filled </p>
-         <!-- dropdown menu below description-->
-         <select>
-            <option value=""> Models</option>
-            <option value="model1"> To be filled</option>
-            <option value="model2"> To be filled</option>
-            <option value="model3"> To be filled</option>
-         </select>
          <!-- button to upload model-->
           <button onclick="window.location.href='/upload-model'"> Upload Model</button>
     </body>

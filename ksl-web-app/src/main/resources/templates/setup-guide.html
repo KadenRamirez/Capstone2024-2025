@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulation Setup Guide</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         body {
             display: flex;
@@ -13,7 +14,43 @@
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
         }
-
+        /* homepage navigation to other pages */
+        .navigationbar
+        {
+            width: 100%;
+            background-color: #5177a2;
+            padding: 10px 0;
+            position: fixed;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .navigationtabs
+        {
+            list-style-type: none;
+            display: flex;
+            justify-content: center;
+            margin: 0;
+            padding: 0;
+        }
+        .navigationtabs li 
+        {
+            margin: 0 20px;
+        }
+        .navigationtabs a
+        {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: background-color 0.3s ease;
+        }
+        .navigationtabs a:hover
+        {
+            background-color: #3a5f89;
+        }
         h1 {
             font-size: 3rem;
             color: #333;
@@ -57,9 +94,39 @@
         button:hover {
             background-color: #3a5f89;
         }
+        /* Style the home button */
+        .homebutton 
+        {
+            display: inline-block;
+            text-align: center;
+            padding: 10px;
+            font-size: 18px;
+            border: none;
+            background-color: #5177a2;
+            color: white;
+            border-radius: 50%;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .homebutton i 
+        {
+            width: 24px;
+            height: 24px;
+        }
     </style>
 </head>
 <body>
+    <!-- navigation bar -->
+    <nav class="navigationbar">
+        <ul class="navigationtabs">
+            <li><a href="/setup-guide"> How to Upload </a></li>
+            <li><a href="/kslmodel-examples"> KSL Models </a></li>
+            <li><a href="/faq"> Frequently Asked Questions (FAQ) </a></li>
+        </ul>
+    </nav>
     <h1>How to Set Up a Simulation Script</h1>
 
     <p class="description">
@@ -103,6 +170,7 @@ fun runSimulation(): String {
     m.simulationReporter.writeHalfWidthSummaryReportAsMarkDown(printer, df = MarkDown.D3FORMAT)
     return writer.toString()
 }
+}
 
 class StemFairMixerEnhancedWithMovement(parent: ModelElement, name: String? = null) : ProcessModel(parent, name) {
     // Define your model setup here
@@ -110,5 +178,10 @@ class StemFairMixerEnhancedWithMovement(parent: ModelElement, name: String? = nu
     </pre>
 
     <button onclick="window.location.href='/upload-model'">Upload Your Model</button>
+
+     <!-- Home Button -->
+     <a href="/" class="homebutton">
+        <i class="fa fa-home"></i>
+     </a> 
 </body>
 </html>

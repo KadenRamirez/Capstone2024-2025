@@ -7,9 +7,10 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
         /* Center the content on the page */
-        body 
+        body
         {
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh; /* Full viewport height */
@@ -54,7 +55,16 @@
         {
             background-color: #3a5f89;
         }
-        .form-container 
+        /* Style the title */
+        h1 
+        {
+            text-align: center;
+            margin: 30px 0 10px 0;
+            font-size: 2rem;
+            color: #333;
+        }
+        /* Style the examples field */
+        .faq-container 
         {
             text-align: center;
             padding: 20px;
@@ -62,54 +72,39 @@
             border-radius: 8px;
             background-color: #fff;
             box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
-            width: 100%;
-            max-width: 600px;
-        }
-
-        /* Style the input field */
-        textarea 
-        {
             width: 90%;
-            height: 200px;
-            padding: 15px;
-            font-size: 18px;
-            border: 2px solid #ccc;
-            border-radius: 4px;
-            margin: 10px 0;
-            resize: vertical;
+            max-width: 800px;
+            max-height: 70vh;
+            overflow-y: auto;
         }
-
-        /* Style the file input */
-        input[type="file"] 
+        .faq-item
         {
-            padding: 10px;
-            margin: 10px 0;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #ddd;
         }
-
-        /* Style the submit button */
-        button 
+        .faq-item:last-child
         {
-            padding: 10px 20px;
-            font-size: 16px;
-            border: none;
-            background-color: #5177a2;
-            color: white;
-            border-radius: 4px;
-            cursor: pointer;
+            border-bottom: none;
         }
-
-        button:hover 
+        .faq-question
         {
-            background-color: #3a5f89;
+            font-size: 1.25rem;
+            color: #5177a2;
+            text-decoration: none;
+            display: inline-block;
+            margin-bottom: 5px;
         }
-
-        /* Style the title */
-        h1 
+        .faq-question:hover
         {
-            font-size: 2rem;
-            color: #333;
+            text-decoration: underline;
+            color: #3a5f89;
         }
-
+        .faq-answer
+        {
+            color: #555;
+            font-size: 1rem;
+        }
         /* Style the home button */
         .homebutton 
         {
@@ -132,7 +127,6 @@
             width: 24px;
             height: 24px;
         }
-
     </style>
 </head>
 <body>  
@@ -144,32 +138,28 @@
             <li><a href="/faq"> Frequently Asked Questions (FAQ) </a></li>
         </ul>
     </nav> 
-    <div class="form-container">
-        <h1>Enter The Model Description</h1>
-
-        <!-- Modify the form to accept multiple file uploads -->
-        <form action="/upload" method="post" enctype="multipart/form-data">
-            <textarea name="description" placeholder="Enter a detailed description of your model..." required></textarea>
-            <br>
-            <!-- Allow multiple files to be uploaded -->
-            <input type="file" name="files" accept=".kt" multiple>
-            <br>
-            <button type="submit">Submit</button>
-        </form>
-
-        <!-- Display the description and uploaded files if they are provided -->
-        <h2 th:if="${modelDescription != null}">Your Model Description: <span th:text="${modelDescription}"></span></h2>
-        <div th:if="${fileNames != null}">
-            <h2>Uploaded Files:</h2>
-            <ul>
-                <li th:each="file : ${fileNames}" th:text="${file}"></li>
-            </ul>
+    <h1> Frequently Asked Questions </h1>
+    <div class="faq-container">
+        <div class="faq-item">
+            <span class="faq-question" onclick="toggleAnswer(1)"> Enter question</span>
+            <p class="faq-answer" id="answer-1"> To be answer. </p>
         </div>
     </div>
-
     <!-- Home Button -->
      <a href="/" class="homebutton">
         <i class="fa fa-home"></i>
      </a> 
+     <!-- Mechanism to show the answer -->
+     <script>
+        var answer = document.getElementById("answer-" + id);
+        if(answer.style.display === "none" || answer.style.display === "")
+        {
+            answer.style.display = "block";
+        }
+        else
+        {
+            answer.style.display = "none";
+        }
+     </script>
 </body>
 </html>
