@@ -21,7 +21,8 @@ fun invokeRunSimulation(scriptPath: String, controlValues: MutableMap<String, St
 
     val invocable = engine as? Invocable
     val result = invocable?.invokeFunction("runSimulation", controlValues) as? String
-    return result ?: "No output from runSimulation"
+    return result?.let(::markdownTableToHtml) ?: "</pre>No output from runSimulation</pre>"
+
 }
 
 fun invokeGetControls(scriptPath: String): MutableMap<String, Double> {
@@ -33,6 +34,47 @@ fun invokeGetControls(scriptPath: String): MutableMap<String, Double> {
     println(result)
     return result ?: mutableMapOf()
 }
+
+fun markdownTableToHtml(markdown: String): String {
+    // Grab non‑blank lines and their indices
+    val rawLines = markdown.trim().lines().filter { it.isNotBlank() }
+
+    // Find the first row that actually looks like a table row (starts & ends with |)
+    val headerIdx = rawLines.indexOfFirst { it.trim().startsWith("|") && it.trim().endsWith("|") }
+    if (headerIdx == -1 || headerIdx + 1 >= rawLines.size) return ""  // no table found
+
+    // Check for a caption immediately above the header row
+    val possibleCaption = if (headerIdx > 0) rawLines[headerIdx - 1].trim() else ""
+    val captionText = possibleCaption.takeIf { it.startsWith("Table:", ignoreCase = true) }
+        ?.removePrefix("Table:")
+        ?.trim()
+
+    val header = parseRow(rawLines[headerIdx])
+    val bodyRows = rawLines.drop(headerIdx + 2).map(::parseRow) // skip alignment row
+
+    return buildString {
+        appendLine("<table>")
+        if (captionText != null) appendLine("  <caption>$captionText</caption>")
+        appendLine("  <thead>")
+        appendLine("    <tr>")
+        header.forEach { cell -> appendLine("      <th>${cell.trim()}</th>") }
+        appendLine("    </tr>")
+        appendLine("  </thead>")
+        appendLine("  <tbody>")
+        bodyRows.forEach { row ->
+            appendLine("    <tr>")
+            row.forEach { cell -> appendLine("      <td>${cell.trim()}</td>") }
+            appendLine("    </tr>")
+        }
+        appendLine("  </tbody>")
+        append("</table>")
+    }
+}
+
+/** Helper to split a pipe‑delimited row into its cells. */
+private fun parseRow(line: String): List<String> =
+    line.trim().trim('|').split('|')
+
 
 fun main() {
     val app = Javalin.create().start(7070)
@@ -128,7 +170,7 @@ fun main() {
         val scriptPath = "src/main/kotlin/simulation/$filename"
         val results = invokeRunSimulation(scriptPath, submittedValues)
     // Display Markdown as raw text in a preformatted block
-    ctx.html("<pre>$results</pre>")
+    ctx.html(results)
     }
     
     // route to upload model page 
