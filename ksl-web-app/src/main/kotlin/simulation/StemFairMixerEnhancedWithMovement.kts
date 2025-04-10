@@ -36,6 +36,19 @@ import ksl.utilities.io.MarkDown
 import java.io.StringWriter
 import java.io.PrintWriter
 
+fun getControls(): List<String> {
+    val m = Model()
+    StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
+    val controls = m.controls()
+    val keyLoop = controls.controlKeys()
+    val keys = mutableListOf<String>()
+    val i = 0
+     for(key in keyLoop) {
+        keys.add(key.toString())
+    }
+    return keys
+}
+
 fun runSimulation(): String{
     val m = Model()
     StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")

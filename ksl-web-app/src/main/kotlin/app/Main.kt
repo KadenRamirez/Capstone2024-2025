@@ -24,6 +24,16 @@ fun invokeRunSimulation(scriptPath: String): String {
     return result ?: "No output from runSimulation"
 }
 
+fun invokeGetControls(scriptPath: String, inputList: List<String>): List<String> {
+    val engine = ScriptEngineManager().getEngineByExtension("kts")
+    engine.eval(File(scriptPath).readText())
+
+    val invocable = engine as? Invocable
+    val result = invocable?.invokeFunction("getControls") as? List<String>
+    return result ?: emptyList()
+}
+
+
 fun main() {
     val app = Javalin.create().start(7070)
 
@@ -88,12 +98,27 @@ fun main() {
     // Run the new `TandemQueueWithBlocking` simulation
     app.get("/run-simulation") { ctx ->
         val filename = ctx.sessionAttribute<String>("filename")
+        if (filename != null) {
+            println("This is the filename: " + filename)
+        } else {
+            ctx.status(400).result("No file uploaded.")
+            return@get
+        }
         val scriptPath = "src/main/kotlin/simulation/$filename"
         val results = invokeRunSimulation(scriptPath)
     // Display Markdown as raw text in a preformatted block
     ctx.html("<pre>$results</pre>")
     }
     
+    app.get("/get-controls") { ctx ->
+        val filename = ctx.sessionAttribute<String>("filename")
+        val scriptPath = "src/main/kotlin/simulation/$filename"
+        val vars = emptyList<String>() ("number of replications")
+        val results = invokeGetControls(scriptPath, vars)
+    // Display Markdown as raw text in a preformatted block
+    ctx.html("<pre>$results</pre>")
+    }
+
     // route to upload model page 
     app.get("/upload-model") { ctx ->
         val context = Context()
