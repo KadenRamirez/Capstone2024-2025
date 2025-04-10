@@ -36,17 +36,25 @@ import ksl.utilities.io.MarkDown
 import java.io.StringWriter
 import java.io.PrintWriter
 
-fun getControls(): List<String> {
+fun getControls(): MutableMap<String, Double> {
     val m = Model()
     StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
     val controls = m.controls()
     val keyLoop = controls.controlKeys()
-    val keys = mutableListOf<String>()
-    val i = 0
-     for(key in keyLoop) {
-        keys.add(key.toString())
+    var controlValues = mutableMapOf<String, Double>()
+    var value: Double
+    var key: String
+     for(controlKey in keyLoop) {
+        try {
+            value = controls.control(controlKey)!!.value.toDouble()
+        } catch (e: Exception) {
+            println("Error converting control value to Double: ${e.message}")
+            continue
+        }
+        key = controlKey.toString()
+        controlValues[key] = value
     }
-    return keys
+    return controlValues
 }
 
 fun runSimulation(controlValues: MutableMap<String, String>): String{
@@ -55,9 +63,9 @@ fun runSimulation(controlValues: MutableMap<String, String>): String{
 
     val controls =  m.controls()
     for ((key, value) in controlValues) {
-        val controlKey = key.replace("@", " ") // Replace underscores with spaces
-        val controlValue = value.toDoubleOrNull() ?: 0.0 // Convert to Double or default to 0.0
-        val control = controls.control(controlKey)
+        var controlKey = key.replace("@", " ") // Replace underscores with spaces
+        var controlValue = value.toDoubleOrNull() ?: 0.0 // Convert to Double or default to 0.0
+        var control = controls.control(controlKey)
         control?.value = controlValue
     }
 

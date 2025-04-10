@@ -24,13 +24,14 @@ fun invokeRunSimulation(scriptPath: String, controlValues: MutableMap<String, St
     return result ?: "No output from runSimulation"
 }
 
-fun invokeGetControls(scriptPath: String, inputList: List<String>): List<String> {
+fun invokeGetControls(scriptPath: String): MutableMap<String, Double> {
     val engine = ScriptEngineManager().getEngineByExtension("kts")
     engine.eval(File(scriptPath).readText())
 
     val invocable = engine as? Invocable
-    val result = invocable?.invokeFunction("getControls") as? List<String>
-    return result ?: emptyList()
+    val result = invocable?.invokeFunction("getControls") as? MutableMap<String, Double>
+    println(result)
+    return result ?: mutableMapOf()
 }
 
 fun main() {
@@ -66,17 +67,14 @@ fun main() {
         }
 
         val scriptPath = "src/main/kotlin/simulation/$filename"
-        var vars = emptyList<String>()
+        var vars = mutableMapOf<String, Double>()
+        vars = invokeGetControls(scriptPath)
 
-        vars = invokeGetControls(scriptPath, vars)
-        println(vars)
-        val keys = mutableListOf<String>()
-        val values = mutableListOf<Double>()
-        for (i in vars) {
-            val key = i
-            keys.add(key)
-            val value = 0.0
-            values.add(value)
+        var keys = mutableListOf<String>()
+        var values = mutableListOf<Double>()
+        for ((key, value) in vars) {
+            keys.add(key) // Add the key to the keys list
+            values.add(value) // Add the value to the values list
         }
 
         val modelDescription = ctx.formParam("description") ?: "No description provided"
@@ -109,10 +107,13 @@ fun main() {
     // Run the new `TandemQueueWithBlocking` simulation
     app.get("/run-simulation") { ctx ->
         val keys = ctx.sessionAttribute<List<String>>("keys") ?: emptyList()
-        val submittedValues = mutableMapOf<String, String>()
+        var submittedValues = mutableMapOf<String, String>()
+        
+
+
         for (key in keys) {
-            val paramName = key.replace("@", " ") // Match the `th:name` in the form
-            val value = ctx.queryParam(paramName) ?: "0" // Default to "0" if no value is provided
+            var paramName = key.replace("@", " ") // Match the `th:name` in the form
+            var value = ctx.queryParam(paramName) ?: "0" // Default to "0" if no value is provided
             submittedValues[key] = value
         }
         println("Submitted Values: $submittedValues")
@@ -128,13 +129,6 @@ fun main() {
         val results = invokeRunSimulation(scriptPath, submittedValues)
     // Display Markdown as raw text in a preformatted block
     ctx.html("<pre>$results</pre>")
-    }
-    
-    app.get("/get-controls") { ctx ->
-        val filename = ctx.sessionAttribute<String>("filename")
-        val scriptPath = "src/main/kotlin/simulation/$filename"
-        var vars = emptyList<String>()
-        vars = invokeGetControls(scriptPath, vars)
     }
     
     // route to upload model page 
