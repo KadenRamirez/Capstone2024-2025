@@ -49,9 +49,18 @@ fun getControls(): List<String> {
     return keys
 }
 
-fun runSimulation(): String{
+fun runSimulation(controlValues: MutableMap<String, String>): String{
     val m = Model()
     StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
+
+    val controls =  m.controls()
+    for ((key, value) in controlValues) {
+        val controlKey = key.replace("@", " ") // Replace underscores with spaces
+        val controlValue = value.toDoubleOrNull() ?: 0.0 // Convert to Double or default to 0.0
+        val control = controls.control(controlKey)
+        control?.value = controlValue
+    }
+
     m.numberOfReplications = 400
     m.simulate()
     //m.print()

@@ -111,11 +111,12 @@
             <label th:text="${key}">Key</label>
             <input 
                 type="text" 
-                th:name="${#strings.replace(key, ' ', '_')}" 
+                th:name="${#strings.replace(key, ' ', '@')}" 
                 th:value="${values[iterStat.index]}" 
                 required 
             />
         </th:block>
+        <button type="submit">Run Simulation</button>
     </form>
 </div>
 </body>

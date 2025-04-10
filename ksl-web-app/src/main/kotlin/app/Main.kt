@@ -14,13 +14,13 @@ import ksl.utilities.io.MarkDown
 import javax.script.ScriptEngineManager
 import javax.script.Invocable
 
-fun invokeRunSimulation(scriptPath: String): String {
+fun invokeRunSimulation(scriptPath: String, controlValues: MutableMap<String, String>): String {
     val engine = ScriptEngineManager().getEngineByExtension("kts")
 
     engine.eval(File(scriptPath).readText())
 
     val invocable = engine as? Invocable
-    val result = invocable?.invokeFunction("runSimulation") as? String
+    val result = invocable?.invokeFunction("runSimulation", controlValues) as? String
     return result ?: "No output from runSimulation"
 }
 
@@ -32,7 +32,6 @@ fun invokeGetControls(scriptPath: String, inputList: List<String>): List<String>
     val result = invocable?.invokeFunction("getControls") as? List<String>
     return result ?: emptyList()
 }
-
 
 fun main() {
     val app = Javalin.create().start(7070)
@@ -65,10 +64,22 @@ fun main() {
         } else {
             ctx.status(400).result("No file uploaded.")
         }
-        
+
+        val scriptPath = "src/main/kotlin/simulation/$filename"
+        var vars = emptyList<String>()
+
+        vars = invokeGetControls(scriptPath, vars)
+        println(vars)
+        val keys = mutableListOf<String>()
+        val values = mutableListOf<Double>()
+        for (i in vars) {
+            val key = i
+            keys.add(key)
+            val value = 0.0
+            values.add(value)
+        }
+
         val modelDescription = ctx.formParam("description") ?: "No description provided"
-        val keys = listOf("Number of replications", "Length of replication", "Length of warm-up replication") //SET WITH CONTROL KEYS
-        val values = listOf(0.0, 0.0, 0.0) //SET WITH CONTROL VALUES
         val context = Context().apply {
             setVariable("modelDescription", modelDescription)
             setVariable("keys", keys)
@@ -97,6 +108,15 @@ fun main() {
     }
     // Run the new `TandemQueueWithBlocking` simulation
     app.get("/run-simulation") { ctx ->
+        val keys = ctx.sessionAttribute<List<String>>("keys") ?: emptyList()
+        val submittedValues = mutableMapOf<String, String>()
+        for (key in keys) {
+            val paramName = key.replace("@", " ") // Match the `th:name` in the form
+            val value = ctx.queryParam(paramName) ?: "0" // Default to "0" if no value is provided
+            submittedValues[key] = value
+        }
+        println("Submitted Values: $submittedValues")
+
         val filename = ctx.sessionAttribute<String>("filename")
         if (filename != null) {
             println("This is the filename: " + filename)
@@ -105,7 +125,7 @@ fun main() {
             return@get
         }
         val scriptPath = "src/main/kotlin/simulation/$filename"
-        val results = invokeRunSimulation(scriptPath)
+        val results = invokeRunSimulation(scriptPath, submittedValues)
     // Display Markdown as raw text in a preformatted block
     ctx.html("<pre>$results</pre>")
     }
@@ -113,12 +133,10 @@ fun main() {
     app.get("/get-controls") { ctx ->
         val filename = ctx.sessionAttribute<String>("filename")
         val scriptPath = "src/main/kotlin/simulation/$filename"
-        val vars = emptyList<String>() ("number of replications")
-        val results = invokeGetControls(scriptPath, vars)
-    // Display Markdown as raw text in a preformatted block
-    ctx.html("<pre>$results</pre>")
+        var vars = emptyList<String>()
+        vars = invokeGetControls(scriptPath, vars)
     }
-
+    
     // route to upload model page 
     app.get("/upload-model") { ctx ->
         val context = Context()
