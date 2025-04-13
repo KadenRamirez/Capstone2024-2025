@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.0"
     application
+    id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 repositories {
@@ -22,10 +23,14 @@ dependencies {
 
 application {
     mainClass.set("app.MainKt") // Entry point
-    // mainClass.set("simulation.Ch8Example2Kt")
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
 
+tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+    archiveBaseName.set("MyApp")
+    archiveVersion.set("1.0")
+    archiveClassifier.set("") // This makes the jar name simply MyApp-1.0.jar
+}
