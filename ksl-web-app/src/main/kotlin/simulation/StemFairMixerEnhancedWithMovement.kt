@@ -36,6 +36,46 @@ import ksl.utilities.io.MarkDown
 import java.io.StringWriter
 import java.io.PrintWriter
 
+fun main(args: Array<String>) {
+    if (args.isEmpty()) {
+        println("Please provide a command: 'getControls' or 'runSimulation'")
+        return
+    }
+
+    when (args[0]) {
+        "getControls" -> {
+            val controls = getControls()
+            println("Available Controls (as JSON-like output):")
+            println(controls.entries.joinToString(prefix = "{\n", postfix = "\n}") { 
+                "  \"${it.key}\": ${it.value}" 
+            })
+        }
+        "runSimulation" -> {
+            if (args.size < 2) {
+                println("Please provide control values as key=value pairs after 'runSimulation'")
+                return
+            }
+
+            val controlValues = mutableMapOf<String, String>()
+            for (i in 1 until args.size) {
+                val (key, value) = args[i].split("=")
+                controlValues[key] = value
+            }
+
+            val resultMarkdown = runSimulation(controlValues)
+            println("Simulation Markdown Output:")
+            println(resultMarkdown)
+        }
+        else -> {
+            println("Unknown command: ${args[0]}")
+            println("Usage:")
+            println("  getControls")
+            println("  runSimulation key1=value1 key2=value2 ...")
+        }
+    }
+}
+
+
 fun getControls(): MutableMap<String, Double> {
     val m = Model()
     StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
