@@ -56,9 +56,12 @@ fun main(args: Array<String>) {
                 return
             }
 
+
             val controlValues = mutableMapOf<String, String>()
             for (i in 1 until args.size) {
-                val (key, value) = args[i].split("=")
+                val (rawKey, rawValue) = args[i].split("=", limit = 2)
+                val key = rawKey.replace("@", " ")
+                val value = rawValue.replace("@", " ")  // Also decode values like "Infinity"
                 controlValues[key] = value
             }
 

@@ -15,11 +15,14 @@ import javax.script.ScriptEngineManager
 import javax.script.Invocable
 
 fun invokeRunSimulation(jarPath: String, controlValues: MutableMap<String, String>): String {
-    val args = mutableListOf("java", "-jar", jarPath, "runSimulation")
+    var args = mutableListOf("java", "-jar", jarPath, "runSimulation")
     for ((key, value) in controlValues) {
-        args.add("$key=$value")
+        val cliKey = key.replace(" ", "@")
+        args.add("$cliKey=$value")
+        
     }
-
+    println("Control Values: $controlValues")
+    println("args: $args")
     val process = ProcessBuilder(args)
         .redirectErrorStream(true)
         .start()
@@ -172,7 +175,7 @@ fun main() {
             var value = ctx.queryParam(paramName) ?: "0" // Default to "0" if no value is provided
             submittedValues[key] = value
         }
-        println("Submitted Values: $submittedValues")
+        //println("Submitted Values: $submittedValues")
 
         val filename = ctx.sessionAttribute<String>("filename")
         if (filename != null) {
