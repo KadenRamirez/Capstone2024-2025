@@ -22,7 +22,8 @@ dependencies {
 }
 
 application {
-    mainClass.set("app.MainKt") // Entry point
+    // mainClass.set("app.MainKt") // Entry point
+    mainClass.set("jars.Ch5Example8Kt") // Entry point for the jar build
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -32,5 +33,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
     archiveBaseName.set("MyApp")
     archiveVersion.set("1.0")
-    archiveClassifier.set("") // This makes the jar name simply MyApp-1.0.jar
+    archiveClassifier.set("") // MyApp-1.0.jar
+    isZip64 = true // <-- enable Zip64 to support > 65535 files
 }
+
