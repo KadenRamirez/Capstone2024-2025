@@ -14,26 +14,42 @@ import ksl.utilities.io.MarkDown
 import javax.script.ScriptEngineManager
 import javax.script.Invocable
 
-fun invokeRunSimulation(scriptPath: String, controlValues: MutableMap<String, String>): String {
-    val engine = ScriptEngineManager().getEngineByExtension("kts")
+fun invokeRunSimulation(jarPath: String, controlValues: MutableMap<String, String>): String {
+    val args = mutableListOf("java", "-jar", jarPath, "runSimulation")
+    for ((key, value) in controlValues) {
+        args.add("$key=$value")
+    }
 
-    engine.eval(File(scriptPath).readText())
+    val process = ProcessBuilder(args)
+        .redirectErrorStream(true)
+        .start()
 
-    val invocable = engine as? Invocable
-    val result = invocable?.invokeFunction("runSimulation", controlValues) as? String
-    return result?.let(::markdownTableToHtml) ?: "</pre>No output from runSimulation</pre>"
+    val output = process.inputStream.bufferedReader().readText()
+    process.waitFor()
 
+    return markdownTableToHtml(output)
 }
 
-fun invokeGetControls(scriptPath: String): MutableMap<String, Double> {
-    val engine = ScriptEngineManager().getEngineByExtension("kts")
-    engine.eval(File(scriptPath).readText())
+fun invokeGetControls(jarPath: String): MutableMap<String, Double> {
+    val process = ProcessBuilder("java", "-jar", jarPath, "getControls")
+        .redirectErrorStream(true)
+        .start()
 
-    val invocable = engine as? Invocable
-    val result = invocable?.invokeFunction("getControls") as? MutableMap<String, Double>
-    println(result)
-    return result ?: mutableMapOf()
+    val output = process.inputStream.bufferedReader().readText()
+    process.waitFor()
+
+
+    val result = mutableMapOf<String, Double>()
+    val regex = Regex("\"(.*?)\"\\s*:\\s*([\\d.]+)")
+    regex.findAll(output).forEach {
+        val key = it.groupValues[1]
+        val value = it.groupValues[2].toDouble()
+        result[key] = value
+    }
+
+    return result
 }
+
 
 fun markdownTableToHtml(markdown: String): String {
     // Grab non‑blank lines and their indices
@@ -108,9 +124,9 @@ fun main() {
             ctx.status(400).result("No file uploaded.")
         }
 
-        val scriptPath = "src/main/kotlin/simulation/$filename"
+        val jarPath = "src/main/kotlin/simulation/$filename"
         var vars = mutableMapOf<String, Double>()
-        vars = invokeGetControls(scriptPath)
+        vars = invokeGetControls(jarPath)
 
         var keys = mutableListOf<String>()
         var values = mutableListOf<Double>()
@@ -150,8 +166,6 @@ fun main() {
     app.get("/run-simulation") { ctx ->
         val keys = ctx.sessionAttribute<List<String>>("keys") ?: emptyList()
         var submittedValues = mutableMapOf<String, String>()
-        
-
 
         for (key in keys) {
             var paramName = key.replace("@", " ") // Match the `th:name` in the form
@@ -167,8 +181,8 @@ fun main() {
             ctx.status(400).result("No file uploaded.")
             return@get
         }
-        val scriptPath = "src/main/kotlin/simulation/$filename"
-        val results = invokeRunSimulation(scriptPath, submittedValues)
+        val jarPath = "src/main/kotlin/simulation/$filename"
+        val results = invokeRunSimulation(jarPath, submittedValues)
     // Display Markdown as raw text in a preformatted block
     ctx.html(results)
     }

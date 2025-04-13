@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.0"
     application
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    // id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 repositories {
@@ -22,18 +22,18 @@ dependencies {
 }
 
 application {
-    // mainClass.set("app.MainKt") // Entry point
-    mainClass.set("jars.Ch5Example8Kt") // Entry point for the jar build
+    mainClass.set("app.MainKt") // Entry point
+    //mainClass.set("simulation.StemFairMixerEnhancedWithMovementKt") // Entry point for the jar build
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
 
-tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-    archiveBaseName.set("MyApp")
-    archiveVersion.set("1.0")
-    archiveClassifier.set("") // MyApp-1.0.jar
-    isZip64 = true // <-- enable Zip64 to support > 65535 files
-}
+// tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+//    archiveBaseName.set("MyApp")
+//    archiveVersion.set("1.0")
+//    archiveClassifier.set("") // MyApp-1.0.jar
+//    isZip64 = true // <-- enable Zip64 to support > 65535 files
+//}
 
