@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.0"
     application
-    //id("com.github.johnrengelman.shadow") version "8.1.1"
+    // id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 repositories {
@@ -30,10 +30,10 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
 
-//tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+// tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
 //    archiveBaseName.set("MyApp")
 //   archiveVersion.set("1.0")
 //    archiveClassifier.set("") // MyApp-1.0.jar
 //    isZip64 = true // <-- enable Zip64 to support > 65535 files
-//}
+// }
 
