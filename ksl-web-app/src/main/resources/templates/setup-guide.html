@@ -131,9 +131,10 @@
     <h1>How to Set Up a Simulation Script</h1>
 
     <p class="description">
-        To run a simulation using the web application, you must upload a <strong>.kts</strong> file.
-        The script must belong to the <code>simulation</code> package and include a <code>runSimulation()</code> function.
-        This function will be called automatically after upload to execute your model and return the results.
+        To run a simulation using the web application, you must upload a <strong>.jar</strong>.
+        The jar must contain the execution of a KSL model. The model should have a <code>runSimulation()</code> function and <code></code>getControls()</code> function.
+        These functions will be called automatically after upload to execute your model and return the results.
+        The main function will need to pass in arguments and choose which function to run based off that.
     </p>
 
     <pre>
@@ -151,26 +152,92 @@ import java.io.PrintWriter
 import ksl.controls.ControlType
 import ksl.controls.KSLControl
 
-fun runSimulation(): String {
+fun main(args: Array<String>) {
+    if (args.isEmpty()) {
+        println("Please provide a command: 'getControls' or 'runSimulation'")
+        return
+    }
+
+    when (args[0]) {
+        "getControls" -> {
+            val controls = getControls()
+            println("Available Controls (as JSON-like output):")
+            println(controls.entries.joinToString(prefix = "{\n", postfix = "\n}") { 
+                "  \"${it.key}\": ${it.value}" 
+            })
+        }
+        "runSimulation" -> {
+            if (args.size < 2) {
+                println("Please provide control values as key=value pairs after 'runSimulation'")
+                return
+            }
+
+
+            val controlValues = mutableMapOf<String, String>()
+            for (i in 1 until args.size) {
+                val (rawKey, rawValue) = args[i].split("=", limit = 2)
+                val key = rawKey.replace("@", " ")
+                val value = rawValue.replace("@", " ")  // Also decode values like "Infinity"
+                controlValues[key] = value
+            }
+
+            val resultMarkdown = runSimulation(controlValues)
+            println("Simulation Markdown Output:")
+            println(resultMarkdown)
+        }
+        else -> {
+            println("Unknown command: ${args[0]}")
+            println("Usage:")
+            println("  getControls")
+            println("  runSimulation key1=value1 key2=value2 ...")
+        }
+    }
+}
+
+
+fun getControls(): MutableMap<String, Double> {
     val m = Model()
-    StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case") // Example model name
+    StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
+    val controls = m.controls()
+    val keyLoop = controls.controlKeys()
+    var controlValues = mutableMapOf<String, Double>()
+    var value: Double
+    var key: String
+     for(controlKey in keyLoop) {
+        try {
+            value = controls.control(controlKey)!!.value.toDouble()
+        } catch (e: Exception) {
+            println("Error converting control value to Double: ${e.message}")
+            continue
+        }
+        key = controlKey.toString()
+        controlValues[key] = value
+    }
+    return controlValues
+}
+
+fun runSimulation(controlValues: MutableMap<String, String>): String{
+    val m = Model()
+    StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
+
+    val controls =  m.controls()
+    for ((key, value) in controlValues) {
+        var controlKey = key.replace("@", " ") // Replace underscores with spaces
+        var controlValue = value.toDoubleOrNull() ?: 0.0 // Convert to Double or default to 0.0
+        var control = controls.control(controlKey)
+        control?.value = controlValue
+    }
+
     m.numberOfReplications = 400
     m.simulate()
+    //m.print()
+    val stringWriter = StringWriter()
+    val printWriter = PrintWriter(stringWriter)
 
-    val writer = StringWriter()
-    val printer = PrintWriter(writer)
+    m.simulationReporter.writeHalfWidthSummaryReportAsMarkDown(printWriter, df = MarkDown.D3FORMAT)
 
-    val controls = m.controls()
-    val map = controls.asMap()
-    println("This is the map: " + map)
-    println("This is the key: ")
-    val keyLoop = controls.controlKeys()
-    for(key in keyLoop) {
-        println(key)
-
-    m.simulationReporter.writeHalfWidthSummaryReportAsMarkDown(printer, df = MarkDown.D3FORMAT)
-    return writer.toString()
-}
+    val markdownOutput = stringWriter.toString()
+    return markdownOutput
 }
 
 class StemFairMixerEnhancedWithMovement(parent: ModelElement, name: String? = null) : ProcessModel(parent, name) {
