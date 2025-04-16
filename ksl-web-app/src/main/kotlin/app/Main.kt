@@ -152,6 +152,33 @@ fun main() {
         ctx.redirect("/model")
     }
 
+    app.get("/load-model/{filename}") { ctx ->
+        val filename = ctx.pathParam("filename")
+        val jarPath = "src/main/kotlin/simulation/$filename"
+    
+        // Extract controls from the existing .jar
+        val vars = invokeGetControls(jarPath)
+    
+        val keys = mutableListOf<String>()
+        val values = mutableListOf<Double>()
+        for ((key, value) in vars) {
+            keys.add(key)
+            values.add(value)
+        }
+    
+        // Optional: You can let the description come from a query param or set a default
+        val modelDescription = ctx.queryParam("description") ?: "Loaded existing model: $filename"
+    
+        // Save everything to the session so it works with /model and /run-simulation
+        ctx.sessionAttribute("modelDescription", modelDescription)
+        ctx.sessionAttribute("keys", keys)
+        ctx.sessionAttribute("values", values)
+        ctx.sessionAttribute("filename", filename)
+    
+        // Redirect to model page
+        ctx.redirect("/model")
+    }
+
     // Render the model page with the description
     app.get("/model") { ctx ->
         val modelDescription = ctx.sessionAttribute<String>("modelDescription") ?: "No description provided"
