@@ -149,6 +149,21 @@
             width: 24px;
             height: 24px;
         }
+        #loadingOverlay
+        {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(255, 255, 255, 0.8);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            font-size: 1.5rem;
+        }
     </style>
 </head>
 <body>
@@ -197,6 +212,19 @@
     <a href="/" class="homebutton">
         <i class="fa fa-home"></i>
     </a> 
+    <!-- Javascript for the loader -->
+    <script>
+        const form = document.querySelector("form");
+        form.addEventListener("submit", () =>
+        {
+            document.getElementById("loadingOverlay").style.display = "flex";
+        });
+      </script>
+      <!-- Loading -->
+      <div id="loadingOverlay">
+        <i class="fa fa-spinner fa-spin" style="font-size: 48px; color:#bC6565"></i>
+        <p style="margin-top: 20px; font-weight: bold; color: #555;"> Now running simulation... </p>
+     </div>
 </body>
 </html>
 
