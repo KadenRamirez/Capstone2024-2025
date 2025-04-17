@@ -80,6 +80,16 @@
             resize: vertical;
         }
 
+        input[type="text"] 
+        {
+            width: 90%;
+            padding: 15px;
+            font-size: 18px;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
         /* Style the file input */
         input[type="file"] 
         {
@@ -147,10 +157,12 @@
         </ul>
     </nav> 
     <div class="form-container">
-        <h1>Enter The Model Description</h1>
+        <h1>Enter Model Information</h1>
 
         <!-- Modify the form to accept multiple file uploads -->
         <form action="/upload" method="post" enctype="multipart/form-data">
+            <input type="text" name="modelName" placeholder="Enter the model name..." required> 
+            <br>
             <textarea name="description" placeholder="Enter a detailed description of your model..." required></textarea>
             <br>
             <!-- Allow multiple files to be uploaded -->

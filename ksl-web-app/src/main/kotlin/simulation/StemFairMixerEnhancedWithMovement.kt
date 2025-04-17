@@ -84,7 +84,11 @@ fun getControls(): MutableMap<String, Double> {
     StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
     val controls = m.controls()
     val keyLoop = controls.controlKeys()
-    var controlValues = mutableMapOf<String, Double>()
+    // Start with your three replication params
+    val controlValues = mutableMapOf<String, Double>()
+    controlValues["numberOfReplications"] = m.numberOfReplications.toDouble()
+    controlValues["lengthOfReplication"] = m.lengthOfReplication.toDouble()
+    controlValues["lengthOfReplicationWarmUp"] = m.lengthOfReplicationWarmUp.toDouble()
     var value: Double
     var key: String
      for(controlKey in keyLoop) {
@@ -103,16 +107,22 @@ fun getControls(): MutableMap<String, Double> {
 fun runSimulation(controlValues: MutableMap<String, String>): String{
     val m = Model()
     StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
+    val controls = m.controls()
 
-    val controls =  m.controls()
-    for ((key, value) in controlValues) {
-        var controlKey = key.replace("@", " ") // Replace underscores with spaces
-        var controlValue = value.toDoubleOrNull() ?: 0.0 // Convert to Double or default to 0.0
-        var control = controls.control(controlKey)
-        control?.value = controlValue
-    }
+    controlValues["lengthOfReplication"]?.toDoubleOrNull()
+        ?.let { m.lengthOfReplication = it }
+    controlValues["lengthOfReplicationWarmUp"]?.toDoubleOrNull()
+        ?.let { m.lengthOfReplicationWarmUp = it }
+    controlValues["numberOfReplications"]?.toDoubleOrNull()
+        ?.let { m.numberOfReplications = it.toInt() }
 
-    m.numberOfReplications = 400
+    controlValues
+        .filterKeys { it !in listOf("lengthOfReplication", "lengthOfReplicationWarmUp", "numberOfReplications") }
+        .forEach { (key, valueStr) ->
+            val controlKey = key.replace("@", " ")
+            val controlValue = valueStr.toDoubleOrNull() ?: 0.0
+            controls.control(controlKey)?.value = controlValue
+        }
     m.simulate()
     //m.print()
     val stringWriter = StringWriter()

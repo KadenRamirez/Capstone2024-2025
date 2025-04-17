@@ -37,21 +37,38 @@ fun invokeGetControls(jarPath: String): MutableMap<String, Double> {
     val process = ProcessBuilder("java", "-jar", jarPath, "getControls")
         .redirectErrorStream(true)
         .start()
-
     val output = process.inputStream.bufferedReader().readText()
     process.waitFor()
 
+    // This pattern will match:
+    val regex = Regex(
+      "\"" +                // opening quote
+      "(.*?)" +             //   ➞ group(1): key (non‑greedy)
+      "\"\\s*:\\s*" +       // quote, colon, whitespace
+      "(" +
+        "[+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?" + //  group(2): normal float (e.g. 3.14, 6.02e23)
+        "|Infinity" +                            //     or the literal Infinity
+      ")" 
+    )
 
     val result = mutableMapOf<String, Double>()
-    val regex = Regex("\"(.*?)\"\\s*:\\s*([\\d.]+)")
-    regex.findAll(output).forEach {
-        val key = it.groupValues[1]
-        val value = it.groupValues[2].toDouble()
-        result[key] = value
+    regex.findAll(output).forEach { m ->
+        val keyRaw   = m.groupValues[1]
+        val valueRaw = m.groupValues[2]
+
+        val value = if (valueRaw == "Infinity") {
+            Double.POSITIVE_INFINITY
+        } else {
+            valueRaw.toDouble()
+        }
+
+        result[keyRaw] = value
     }
 
+    println("Extracted controls: $result")
     return result
 }
+
 
 
 fun markdownTableToHtml(markdown: String): String {
@@ -128,8 +145,7 @@ fun main() {
         }
 
         val jarPath = "src/main/kotlin/simulation/$filename"
-        var vars = mutableMapOf<String, Double>()
-        vars = invokeGetControls(jarPath)
+        var vars = invokeGetControls(jarPath) //mutableMapOf<String, Double>()
 
         var keys = mutableListOf<String>()
         var values = mutableListOf<Double>()
@@ -138,13 +154,16 @@ fun main() {
             values.add(value) // Add the value to the values list
         }
 
+        val modelName = ctx.formParam("modelName") ?: "No model name provided"
         val modelDescription = ctx.formParam("description") ?: "No description provided"
         val context = Context().apply {
+            setVariable("modelName", modelName)
             setVariable("modelDescription", modelDescription)
             setVariable("keys", keys)
             setVariable("values", values)
             setVariable("filename", filename)
         }
+        ctx.sessionAttribute("modelName", modelName)
         ctx.sessionAttribute("modelDescription", modelDescription)
         ctx.sessionAttribute("keys", keys)
         ctx.sessionAttribute("values", values)
@@ -157,7 +176,7 @@ fun main() {
         val jarPath = "src/main/kotlin/simulation/$filename"
     
         // Extract controls from the existing .jar
-        val vars = invokeGetControls(jarPath)
+        val vars = invokeGetControls(jarPath) // mutableMapOf<String, Double>()
     
         val keys = mutableListOf<String>()
         val values = mutableListOf<Double>()
@@ -167,9 +186,11 @@ fun main() {
         }
     
         // Optional: You can let the description come from a query param or set a default
+        val modelName = ctx.queryParam("modelName") ?: "Loaded existing model: $filename"
         val modelDescription = ctx.queryParam("description") ?: "Loaded existing model: $filename"
     
         // Save everything to the session so it works with /model and /run-simulation
+        ctx.sessionAttribute("modelName", modelName)
         ctx.sessionAttribute("modelDescription", modelDescription)
         ctx.sessionAttribute("keys", keys)
         ctx.sessionAttribute("values", values)
@@ -181,10 +202,12 @@ fun main() {
 
     // Render the model page with the description
     app.get("/model") { ctx ->
+        val modelName = ctx.sessionAttribute<String>("modelName") ?: "No model name provided"
         val modelDescription = ctx.sessionAttribute<String>("modelDescription") ?: "No description provided"
         val keys = ctx.sessionAttribute<List<String>>("keys") ?: emptyList()
         val values = ctx.sessionAttribute<List<String>>("values") ?: emptyList()
         val context = Context().apply {
+            setVariable("modelName", modelName)
             setVariable("modelDescription", modelDescription)
             setVariable("keys", keys)
             setVariable("values", values)

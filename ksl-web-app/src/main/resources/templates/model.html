@@ -163,13 +163,10 @@
     <!-- secondary navigation bar -->
     <div class="secondarynavigation">
         <a href="/">Upload New Model</a>
-        <a href="/model">Model</a>
-        <a href="#">Advanced</a>
-        <a href="#">Configs</a>
     </div>
     <!-- main model content -->
     <div class="content">
-        <h1>Model Name</h1>
+        <h1 th:text="${modelName}"></h1>
         <p th:text="${modelDescription}"></p>
     </div>
     <div class="form-container">
@@ -178,6 +175,15 @@
             <th:block th:each="key, iterStat : ${keys}">
                 <label th:text="${key}">Key</label>
                 <input 
+                    th:if="${iterStat.index == 0}" 
+                    type="number" 
+                    step="1" 
+                    th:name="${#strings.replace(key, ' ', '@')}" 
+                    th:value="${values[iterStat.index]}" 
+                    required 
+                />
+                <input 
+                    th:if="${iterStat.index != 0}" 
                     type="text" 
                     th:name="${#strings.replace(key, ' ', '@')}" 
                     th:value="${values[iterStat.index]}" 
