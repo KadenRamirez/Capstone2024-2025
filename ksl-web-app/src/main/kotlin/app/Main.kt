@@ -111,9 +111,13 @@ fun markdownTableToHtml(markdown: String): String {
 private fun parseRow(line: String): List<String> =
     line.trim().trim('|').split('|')
 
+fun getHerokuAssignedPort(): Int {
+        val port = System.getenv("PORT")
+        return port?.toIntOrNull() ?: 80
+}
 
 fun main() {
-    val app = Javalin.create().start(7070)
+    val app = Javalin.create().start(getHerokuAssignedPort())
 
     // Configure Thymeleaf
     val templateEngine = TemplateEngine().apply {
@@ -266,7 +270,7 @@ fun main() {
         ctx.html(html)
     }
 
-    println("Server running on http://localhost:7070")
+    println("Server running on http://localhost:80")
     println("Press ENTER to stop the server...")
 
     // Wait for ENTER key press to stop the server
