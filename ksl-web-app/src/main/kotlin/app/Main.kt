@@ -219,7 +219,7 @@ fun main() {
         val html = templateEngine.process("model", context)
         ctx.html(html)
     }
-    // Run the new `TandemQueueWithBlocking` simulation
+    // Run the new simulation
     app.get("/run-simulation") { ctx ->
         val keys = ctx.sessionAttribute<List<String>>("keys") ?: emptyList()
         var submittedValues = mutableMapOf<String, String>()

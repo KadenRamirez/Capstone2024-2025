@@ -1,7 +1,7 @@
 plugins {
     kotlin("jvm") version "1.9.0"
     application
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("com.github.johnrengelman.shadow") version "8.1.1" // Plugin to make the jar comment it out to run normally
 }
 
 repositories {
@@ -16,9 +16,7 @@ dependencies {
     implementation("org.slf4j:slf4j-simple:2.0.9") // Logging for Javalin
     implementation("commons-io:commons-io:2.11.0") // File handling utilities
     implementation("org.jetbrains.kotlin:kotlin-stdlib") // Kotlin standard library
-    implementation("org.jetbrains.kotlin:kotlin-scripting-jsr223")
-    implementation("org.jetbrains.kotlin:kotlin-script-runtime")
-    api(group = "io.github.rossetti", name = "KSLCore", version = "R1.2.0")
+    api(group = "io.github.rossetti", name = "KSLCore", version = "R1.2.0")// KSl Model Dependencies
 }
 
 application {
@@ -30,6 +28,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
     kotlinOptions.jvmTarget = "17"
 }
 
+// Task that build the jar comment it out to run normally
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
     archiveBaseName.set("MyApp")
     archiveVersion.set("1.0")
