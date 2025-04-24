@@ -137,20 +137,39 @@
         The main function will need to pass in arguments and choose which function to run based off that.
     </p>
 
+    <p class="description"> 
+        Below is the code needed to adapt a KSL model to work with the web application.
+        For more information on compatible model class formatting, please refer to the source code of <code>Ch8Example3.kt</code> and <code>StemFairMixerEnhancedWithMovement.kt</code> on 
+        <a href="https://github.com/rossetti/KSL/tree/main/KSLExamples/src/main/kotlin/ksl/examples/book/chapter8" target="_blank" rel="noopener noreferrer">
+            KSL-Github
+        </a>.
+        After adding the below code and compiling your model into a <strong>.jar</strong> you are able to upload it to the web application.
+    </p>
+    
+
     <pre>
+//Packaging and imports to add to your model
 package simulation
-// your imports
-import ksl.modeling.entity.ProcessModel
-import ksl.simulation.Model
-import ksl.simulation.ModelElement
-import ksl.utilities.io.MarkDown
-import ksl.simulation.Model
-import ksl.utilities.io.KSL
 import ksl.utilities.io.MarkDown
 import java.io.StringWriter
 import java.io.PrintWriter
-import ksl.controls.ControlType
-import ksl.controls.KSLControl
+
+// Whatever imports you need for your model
+import ksl.modeling.elements.EventGenerator
+import ksl.modeling.entity.ProcessModel
+import ksl.modeling.entity.ResourceCIfc
+import ksl.modeling.entity.ResourceWithQ
+import ksl.modeling.nhpp.NHPPTimeBtwEventRV
+import ksl.modeling.nhpp.PiecewiseConstantRateFunction
+import ksl.modeling.spatial.DistancesModel
+import ksl.modeling.variable.*
+import ksl.simulation.KSLEvent
+import ksl.simulation.ModelElement
+import ksl.utilities.divideConstant
+import ksl.utilities.random.rvariable.*
+import ksl.simulation.Model
+import ksl.utilities.io.KSL
+
 
 fun main(args: Array<String>) {
     if (args.isEmpty()) {
@@ -177,7 +196,7 @@ fun main(args: Array<String>) {
             for (i in 1 until args.size) {
                 val (rawKey, rawValue) = args[i].split("=", limit = 2)
                 val key = rawKey.replace("@", " ")
-                val value = rawValue.replace("@", " ")  // Also decode values like "Infinity"
+                val value = rawValue.replace("@", " ")
                 controlValues[key] = value
             }
 
@@ -197,10 +216,14 @@ fun main(args: Array<String>) {
 
 fun getControls(): MutableMap<String, Double> {
     val m = Model()
-    StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
+    StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case") //replace with your model class
     val controls = m.controls()
     val keyLoop = controls.controlKeys()
-    var controlValues = mutableMapOf<String, Double>()
+
+    val controlValues = mutableMapOf<String, Double>()
+    controlValues["numberOfReplications"] = m.numberOfReplications.toDouble()
+    controlValues["lengthOfReplication"] = m.lengthOfReplication.toDouble()
+    controlValues["lengthOfReplicationWarmUp"] = m.lengthOfReplicationWarmUp.toDouble()
     var value: Double
     var key: String
      for(controlKey in keyLoop) {
@@ -218,19 +241,26 @@ fun getControls(): MutableMap<String, Double> {
 
 fun runSimulation(controlValues: MutableMap<String, String>): String{
     val m = Model()
-    StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case")
+    StemFairMixerEnhancedWithMovement(m, "Stem Fair Base Case") //replace with your model class
+    val controls = m.controls()
 
-    val controls =  m.controls()
-    for ((key, value) in controlValues) {
-        var controlKey = key.replace("@", " ") // Replace underscores with spaces
-        var controlValue = value.toDoubleOrNull() ?: 0.0 // Convert to Double or default to 0.0
-        var control = controls.control(controlKey)
-        control?.value = controlValue
-    }
+    controlValues["lengthOfReplication"]?.toDoubleOrNull()
+        ?.let { m.lengthOfReplication = it }
+    controlValues["lengthOfReplicationWarmUp"]?.toDoubleOrNull()
+        ?.let { m.lengthOfReplicationWarmUp = it }
+    controlValues["numberOfReplications"]?.toDoubleOrNull()
+        ?.let { m.numberOfReplications = it.toInt() }
 
-    m.numberOfReplications = 400
+    controlValues
+        .filterKeys { it !in listOf("lengthOfReplication", "lengthOfReplicationWarmUp", "numberOfReplications") }
+        .forEach { (key, valueStr) ->
+            val controlKey = key.replace("@", " ")
+            val controlValue = valueStr.toDoubleOrNull() ?: 0.0
+            controls.control(controlKey)?.value = controlValue
+        }
     m.simulate()
     //m.print()
+    //compatible output for the results page
     val stringWriter = StringWriter()
     val printWriter = PrintWriter(stringWriter)
 
@@ -240,8 +270,9 @@ fun runSimulation(controlValues: MutableMap<String, String>): String{
     return markdownOutput
 }
 
+// Below is an example of a model class. You can replace this with your actual model class code.
 class StemFairMixerEnhancedWithMovement(parent: ModelElement, name: String? = null) : ProcessModel(parent, name) {
-    // Define your model setup here
+    // Your model implementation here
 }
     </pre>
 

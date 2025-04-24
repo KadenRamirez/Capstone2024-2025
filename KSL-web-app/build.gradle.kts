@@ -23,7 +23,7 @@ dependencies {
 
 application {
     mainClass.set("app.MainKt") // Entry point
-    //mainClass.set("simulation.StemFairMixerEnhancedWithMovementKt") // Entry point for the jar build
+    // mainClass.set("simulation.StemFairMixerEnhancedWithMovementKt") // Entry point for the jar build
 }
 
 tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
