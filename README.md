@@ -20,7 +20,7 @@ How To Build and Execute:
     + Make sure the labeled shadowJar dependencies are not commented out in the build.gradle.kts
     + Edit application node in the build.gradle.kts to point to your desired file
     + Open the command line in the same directory as the build.gradle.kts and enter ".\gradlew shadowJar"
-    + After your program is finished building you will find the associated .jar in the build\libs folder (relative to the build.gradle.kts) with the hyphenated name MyApp-1.0.jar or whatever name you chose in     your shadowJar.
+    + After your program is finished building you will find the associated .jar in the build\libs folder (relative to the build.gradle.kts) with the hyphenated name MyApp-1.0.jar or whatever name you chose in your shadowJar.
     + To run your .jar navigate to the directory it is stored using the command line and enter "java -jar {Your jar name here}.jar"
 
 How to Build a Model jar and Related Architecture:
